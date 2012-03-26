@@ -5,12 +5,11 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <!--<link rel="stylesheet" href="jquery.mobile-1.0.min.css"/>-->
-<link rel="stylesheet" href="jquery.mobile-1.0.css"/>
+<link rel="stylesheet" href="jquery.mobile-1.0.1.css"/>
 <!--<link rel="stylesheet" href="jquery.mobile.structure-1.0.min.css" />-->
-<!-- <link rel="stylesheet" href="soat-custom-theme.min.css"> -->
 
 <script type="text/javascript" charset="utf-8" src="phonegap-1.3.0.js" ></script>
-<script type="text/javascript" charset="utf-8" src="jquery-1.7.1.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="jquery-1.7.2.min.js"></script>
 <script type="text/javascript">
     $(document).bind("mobileinit", function () {
         // Make your jQuery Mobile framework configuration changes here!
@@ -30,7 +29,7 @@
         $.mobile.page.prototype.options.domCache = true;
     });
 </script>
-<script type="text/javascript" charset="utf-8" src="jquery.mobile-1.0.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="jquery.mobile-1.0.1.min.js"></script>
 
 <script type="text/javascript">
 //var baseUri = 'http://localhost:8080/webapp';
@@ -44,7 +43,7 @@ var baseUri = 'http://10.0.2.2:8888/webapp';
 
 /* PhoneGap is ready */
 function onDeviceReady() {
-    var db = window.openDatabase("devoxxFr", "1.0", "Devoxx Soat DB", 100);
+    var db = window.openDatabase("devoxxFr", "1.0", "Devoxx DB", 100);
 }
 
 
@@ -426,10 +425,9 @@ function callbackRegisterUserError() {
         <!--</a>-->
     </div>
     <div data-role="content" class="ui-body-a ui-body-a">
-        <p>Quizz Game powered by: So@t</p>
+        <!--<p>Quizz Game powered by: So@t</p>-->
         <img src="images/logoJetoile_petit_v1.png" alt="logoJetoile" />
         <img src="images/cloudbees03.png" alt="cloudbees" />
-        <img src="images/soatExperts_carre_petit.png" alt="soatExperts" />
 
         <div>
             <ul data-role="listview" data-inset="true" data-theme="a" data-dividertheme="a">

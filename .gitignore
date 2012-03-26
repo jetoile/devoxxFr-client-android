@@ -9,5 +9,3 @@ target
 *.ipr
 *.iws
 .idea/
-out/*
-gen/*

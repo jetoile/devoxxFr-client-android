@@ -7,11 +7,11 @@
 <!--<link rel="stylesheet" href="jquery.mobile-1.0.min.css"/>-->
 <link rel="stylesheet" href="jquery.mobile-1.0.css"/>
 <!--<link rel="stylesheet" href="jquery.mobile.structure-1.0.min.css" />-->
-<!-- <link rel="stylesheet" href="soat-custom-theme.min.css"> -->
 
 <script type="text/javascript" charset="utf-8" src="phonegap-1.4.0.js"></script>
-<script type="text/javascript" charset="utf-8" src="websocket.js"></script>
+<!--<script type="text/javascript" charset="utf-8" src="websocket.js"></script>-->
 <script type="text/javascript" charset="utf-8" src="jquery-1.7.1.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="push_client.js"></script>
 <script type="text/javascript">
     $(document).bind("mobileinit", function () {
         // Make your jQuery Mobile framework configuration changes here!
@@ -30,7 +30,7 @@
          $.mobile.page.prototype.options.backBtnText = "previous"; */
 //        $.mobile.page.prototype.options.domCache = true;
         $.ajaxSetup({
-            cache: false
+            cache:false
         });
     });
 </script>
@@ -43,13 +43,45 @@ var baseUri = 'http://localhost:8080/webapp-1.0.1-SNAPSHOT';
 //var baseUri = 'http://devoxxfrjee.jetoile.cloudbees.net';
 //var baseUri = 'http://devoxxfr.jetoile.cloudbees.net';
 
+//var myWebSocket = new WebSocket("ws://localhost:8080/webapp-1.0.1-SNAPSHOT/adapter/dsf");
+//
+//if (window.MozWebSocket) {
+//    window.WebSocket = window.MozWebSocket;
+//}
+//
+//function doSend() {
+//    if (window.localStorage.getItem("username") !== undefined) {
+//        myWebSocket.send(window.localStorage.getItem("username"));
+//    }
+//}
+//
+//function openConnection() {
+////    myWebSocket = new WebSocket("ws://devoxxfrjee.jetoile.cloudbees.net/adapter/dsf");
+//    myWebSocket = new WebSocket("ws://localhost:8080/webapp-1.0.1-SNAPSHOT/adapter/dsf");
+//    myWebSocket.onopen = function () {
+//        $('#support').html('<h2>Connection open</h2>');
+////        };
+//
+//        myWebSocket.onmessage = function (event) {
+//            var message = event.data; //JSON.parse(event.data);
+//            $('#support').html('<h2>' + message + '</h2>');
+//        };
+//
+//        myWebSocket.onclose = function (event) {
+//            $('#support').html('<h2>WebSocket closed</h2>');
+//        };
+//
+//        doSend();
+//    }
+//}
+
 
 /*  ============================= DB ============================
  document.addEventListener("deviceready", onDeviceReady, false); */
 
 /* PhoneGap is ready */
 //function onDeviceReady() {
-//    var db = window.openDatabase("devoxxFr", "1.0", "Devoxx Soat DB", 100);
+//    var db = window.openDatabase("devoxxFr", "1.0", "Devoxx DB", 100);
 //}
 //
 //
@@ -67,10 +99,27 @@ var baseUri = 'http://localhost:8080/webapp-1.0.1-SNAPSHOT';
 //
 //}
 // =================================================================
+$.stream.setup({enableXDR:true});
 
-$.stream.setup({enableXDR: true});
-
-
+function go() {
+    var url = "http://localhost:8080/webapp-1.0.1-SNAPSHOT/pushService"
+    var request = new XMLHttpRequest();
+    request.open("GET", url, true);
+    request.setRequestHeader("Content-Type", "application/x-javascript;");
+    request.setRequestHeader("Access-Control-Allow-Origin", "*");
+    request.onreadystatechange = function () {
+        if (request.readyState == 4) {
+            if (request.status == 200) {
+                if (request.responseText) {
+                    document.getElementById("forecasts").innerHTML =
+                            request.responseText;
+                }
+            }
+//            go();
+        }
+    };
+    request.send(null);
+}
 // =================================================================
 
 function displayOneQuestion(data, nbForm) {
@@ -110,46 +159,29 @@ function displayOneQuestion(data, nbForm) {
     $(result).appendTo('#resultGetQuestion');
 }
 
-/* Set Full Height */
-//$(document).on('pageshow', 'div[data-role="page"]', function () {
-//    var the_height = ($(window).height() - $(this).find('[data-role="header"]').height() - $(this).find('[data-role="footer"]').height());
-//    var adjustment = 0.95;
-//    $(this).height($(window).height()).find('[data-role="content"]').height(the_height * adjustment);
-//});
-
-//var chat = {
-////    lastUsername: "Donghwan Kim",
-////    username: $.trim(window.prompt("Username?")) || "Anonymous" + $(window).width()
-//    username: 'titi1'
-//};
 
 $(function () {
-//    $.stream('10.0.2.2:8080/webapp-1.0.1-SNAPSHOT' + "/servletAsync", {
-//        type: "http",
-//        dataType: "json",
-//        context: $("#content")[0],
-//        open: function(event, stream) {
-////            $("#editor .message").removeAttr("disabled").focus();
-//            stream.send({username: chat.username, message: "Hello"});
-//        },
-//        message: function(event) {
-//            alert(event);
-////            if (chat.lastUsername !== event.data.username) {
-////                $("<p />").addClass("user").text(chat.lastUsername = event.data.username).appendTo(this);
-////            }
-////
-////            $("<p />").addClass("message").text(event.data.message).appendTo(this);
-////            this.scrollTop = this.scrollHeight;
-//        },
-//        error: function() {
-////            $("#editor .message").attr("disabled", "disabled");
-//        },
-//        close: function() {
-////            $("#editor .message").attr("disabled", "disabled");
-//        }
-//    });
 
+    $.stream("http://localhost:8080/webapp-1.0.1-SNAPSHOT/pushService", {
+        type:"http",
+        dataType:"json",
+//        context:$("#content")[0],
+        open:function (event, stream) {
+            stream.send({username:"toto", message:"Hello"});
+        },
+        message:function (event) {
+            alert(event);
+        },
+        error:function () {
+            alert('error');
+//            $("#editor .message").attr("disabled", "disabled");
+        },
+        close:function () {
+            alert('close');
 
+//            $("#editor .message").attr("disabled", "disabled");
+        }
+    });
 
     $('#mainTitleUsername').bind('userChange', function () {
         $(this).html(displayUserName());
@@ -181,7 +213,7 @@ $(function () {
     });
 
 
-    $('#getScore').click( function () {
+    $('#getScore').click(function () {
         $('#getScore').button('disable');
         $.mobile.showPageLoadingMsg();
         $.getJSON(baseUri + '/services/result/' + displayUserName(),
@@ -318,7 +350,7 @@ function _ajax_request(url, data, callback, type, method) {
     return jQuery.ajax({
         type:method,
         url:url,
-        cache: false,
+        cache:false,
         data:data,
         success:callback,
         dataType:type
@@ -428,37 +460,60 @@ function callbackRegisterUserError() {
 </head>
 
 <body>
+
 <script type="text/javascript">
 
-//    var baseWSUri = 'ws://10.0.2.2:8080/webapp-1.0.1-SNAPSHOT/servletAsync?userName=titi1';
-    var baseWSUri = 'ws://localhost:8080/webapp-1.0.1-SNAPSHOT/servletAsync?userName=titi1';
-//    var baseWSUri = 'ws://192.168.1.153:8081';
-//var baseWSUri = 'ws://devoxxfrjee.jetoile.cloudbees.net';
+    //    if (window.WebSocket) {
+    //        $('#html5support').html('<h2>This browser is websocket compliant</h2>');
+    //    } else {
+    //        $('#html5support').html('<h2>This browser is not websocket compliant</h2>');
+    //    }
 
-// new socket
-var socket = new WebSocket(baseWSUri);
-
-    // push a message after the connection is established.
-    socket.onopen = function () {
-        alert('connected');
-    };
-
-    // alerts message pushed from server
-    socket.onmessage = function (msg) {
-//        alert(JSON.stringify(msg));
-        alert(msg);
-    };
-
-    socket.onerror = function () {
-        alert('error');
-    }
+    //    if (myWebSocket.readyState === 1) {
+    //    if (window.localStorage.getItem("username") !== null) {
+    //        alert(conn + ' ' + window.localStorage.getItem("username"));
+    ////        myWebSocket.send(window.localStorage.getItem("username"));
+    //        myWebSocket.send(JSON.stringify('tp'));
+    //    }
+    //    } else  {
+    //        alert('ooo');
+    //    }
 
 
-    // alert close event
-    socket.onclose = function () {
-        alert('closed');
-    };
+    //    openConnection();
+
 </script>
+<!--<script type="text/javascript">-->
+
+<!--//    var baseWSUri = 'ws://10.0.2.2:8080/webapp-1.0.1-SNAPSHOT/servletAsync?userName=titi1';-->
+<!--var baseWSUri = 'ws://localhost:8080/webapp-1.0.1-SNAPSHOT/servletAsync?userName=titi1';-->
+<!--//    var baseWSUri = 'ws://192.168.1.153:8081';-->
+<!--//var baseWSUri = 'ws://devoxxfrjee.jetoile.cloudbees.net';-->
+
+<!--// new socket-->
+<!--var socket = new WebSocket(baseWSUri);-->
+
+<!--// push a message after the connection is established.-->
+<!--socket.onopen = function () {-->
+<!--alert('connected');-->
+<!--};-->
+
+<!--// alerts message pushed from server-->
+<!--socket.onmessage = function (msg) {-->
+<!--//        alert(JSON.stringify(msg));-->
+<!--alert(msg);-->
+<!--};-->
+
+<!--socket.onerror = function () {-->
+<!--alert('error');-->
+<!--}-->
+
+
+<!--// alert close event-->
+<!--socket.onclose = function () {-->
+<!--alert('closed');-->
+<!--};-->
+<!--</script>-->
 
 <!-- Popup Dialog Page -->
 <div data-role="dialog" id="popupRegisterUser">
@@ -499,13 +554,18 @@ var socket = new WebSocket(baseWSUri);
         <!--</a>-->
     </div>
     <div data-role="content" class="ui-body-a ui-body-a">
+        <div id="html5support"></div>
+        <div id="support"></div>
         <p>Quizz Game powered by: So@t</p>
         <img src="images/logoJetoile_petit_v1.png" alt="logoJetoile"/>
         <img src="images/cloudbees03.png" alt="cloudbees"/>
-        <img src="images/soatExperts_carre_petit.png" alt="soatExperts"/>
+
+        <input type="button" onclick="go()" value="Go!"></input>
+        <div id="forecasts"></div>
 
         <div>
             <ul data-role="listview" data-inset="true" data-theme="a" data-dividertheme="a">
+                <!--<input type="button" onclick="javascript:doSend();" value="webSocket"/>-->
                 <li data-role="list-divider">Menu</li>
                 <li>
                     <a href="#questionPage">

@@ -316,37 +316,35 @@ public class WebSocket implements Runnable {
 	 * @param text
 	 *            String to send to server
 	 */
-	public void send(final String text) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				if (instance.readyState == WEBSOCKET_STATE_OPEN) {
-					try {
-						instance._send(text);
-					} catch (IOException e) {
-						instance.onError(e);
-					}
-				} else {
-					instance.onError(new NotYetConnectedException());
-				}
-			}
-		}).start();
-	}
+// a message is sent to server!
+    public void send(final String text) {
+        // new thread
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (instance.readyState == WEBSOCKET_STATE_OPEN) {
+                    try {
+                        instance._send(text);
+                    } catch (IOException e) {
+                        instance.onError(e);
+                    }
+                } else {
+                    instance.onError(new NotYetConnectedException());
+                }
+            }
+        }).start();
+    }
 
-	/**
-	 * Called when an entire text frame has been received.
-	 * 
-	 * @param msg
-	 *            Message from websocket server
-	 */
-	public void onMessage(final String msg) {
-		appView.post(new Runnable() {
-			@Override
-			public void run() {
-				appView.loadUrl(buildJavaScriptData(EVENT_ON_MESSAGE, msg));
-			}
-		});
-	}
+    // when a message is received
+    public void onMessage(final String msg) {
+        // post a new thread to View
+        appView.post(new Runnable() {
+            @Override
+            public void run() {
+                appView.loadUrl(buildJavaScriptData(EVENT_ON_MESSAGE, msg));
+            }
+        });
+    }
 
 	public void onOpen() {
 		appView.post(new Runnable() {
